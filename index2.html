@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>车小她 · 科技未来版</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+      background: #0a0e1a;
+      color: #e8edf5;
+      max-width: 420px;
+      margin: 0 auto;
+      padding-bottom: 70px;
+    }
+
+    /* 粒子背景 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(102,126,234,0.15) 0%, transparent 60%),
+                  radial-gradient(ellipse at 70% 80%, rgba(118,75,162,0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #1a1f3a 0%, #0d1225 100%);
+      padding: 18px 20px 50px;
+      border-bottom: 1px solid rgba(102,126,234,0.15);
+      position: relative;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      top: -60px; right: -20px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(102,126,234,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      position: relative; z-index: 1;
+    }
+    .header-top .logo {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header-top .logo span { -webkit-text-fill-color: #8899ee; }
+    .header-top .icons { display: flex; gap: 16px; font-size: 18px; }
+    .header-search {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(102,126,234,0.2);
+      border-radius: 12px;
+      padding: 11px 16px;
+      color: rgba(255,255,255,0.4);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(10px);
+      position: relative; z-index: 1;
+    }
+    .header-search::before { content: "🔍"; }
+
+    /* Swiper - 超椭圆卡片 */
+    .swiper-wrap { padding: 0 16px; margin-top: -28px; position: relative; z-index: 2; }
+    .swiper {
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(102,126,234,0.15);
+      height: 160px;
+      position: relative;
+    }
+    .swiper-slide {
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .swiper-slide:nth-child(1) { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .swiper-slide:nth-child(2) { background: linear-gradient(135deg, #0c3483 0%, #a2b6df 100%); }
+    .swiper-slide:nth-child(3) { background: linear-gradient(135deg, #1a1f3a 0%, #667eea 100%); }
+    .swiper-slide .tag { text-align: center; }
+    .swiper-slide .tag .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+    .swiper-slide .tag h3 { font-size: 20px; margin-bottom: 4px; font-weight: 600; }
+    .swiper-slide .tag p { font-size: 13px; opacity: 0.8; }
+    .swiper-dots {
+      position: absolute;
+      bottom: 10px;
+      left: 50%; transform: translateX(-50%);
+      display: flex; gap: 6px;
+    }
+    .swiper-dots span {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transition: all 0.3s;
+    }
+    .swiper-dots span.active { background: #667eea; width: 20px; border-radius: 3px; }
+
+    /* Glass card common */
+    .glass {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+    }
+
+    /* Section */
+    .section { padding: 16px 16px 0; }
+
+    /* Quick Actions */
+    .quick-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .quick-actions .qa-card {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 16px 8px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .quick-actions .qa-card:active { border-color: #667eea; background: rgba(102,126,234,0.1); }
+    .quick-actions .qa-card .icon { font-size: 28px; margin-bottom: 4px; }
+    .quick-actions .qa-card .label { font-size: 11px; color: #8899bb; }
+
+    /* 签到 + 活动 - 玻璃态 */
+    .promo-row {
+      display: flex;
+      gap: 12px;
+    }
+    .promo-row .promo-card {
+      flex: 1;
+      border-radius: 18px;
+      padding: 18px 14px;
+      color: #fff;
+      min-height: 85px;
+      position: relative;
+      overflow: hidden;
+    }
+    .promo-row .promo-card.blue {
+      background: linear-gradient(135deg, #667eea 0%, #5b6fd4 100%);
+    }
+    .promo-row .promo-card.purple {
+      background: linear-gradient(135deg, #764ba2 0%, #9b59b6 100%);
+    }
+    .promo-row .promo-card::after {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .promo-row .promo-card .title { font-size: 15px; font-weight: 700; }
+    .promo-row .promo-card .sub { font-size: 11px; opacity: 0.8; margin-top: 4px; }
+
+    /* Module grid */
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .section-title h3 { font-size: 15px; font-weight: 600; color: #c8d0e8; }
+    .section-title .more { font-size: 11px; color: #667eea; }
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .module-grid .module-item {
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 18px 8px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .module-grid .module-item:active { border-color: #667eea; background: rgba(102,126,234,0.08); transform: scale(0.95); }
+    .module-grid .module-item .icon { font-size: 28px; margin-bottom: 4px; }
+    .module-grid .module-item .name { font-size: 11px; color: #8899bb; }
+
+    /* News */
+    .news-list { margin-top: 6px; }
+    .news-item {
+      display: flex;
+      gap: 12px;
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
+      transition: all 0.3s;
+    }
+    .news-item:active { border-color: #667eea; }
+    .news-item .thumb {
+      width: 80px; height: 60px;
+      border-radius: 10px;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      opacity: 0.8;
+    }
+    .news-item .info { flex: 1; }
+    .news-item .info h4 { font-size: 13px; font-weight: 500; line-height: 1.4; color: #c8d0e8; }
+    .news-item .info .meta { font-size: 11px; color: #667788; margin-top: 6px; }
+    .news-item .info .meta span {
+      background: rgba(102,126,234,0.15);
+      color: #8899ee;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-right: 6px;
+      font-size: 10px;
+    }
+
+    /* Knowledge */
+    .knowledge-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .knowledge-scroll::-webkit-scrollbar { display: none; }
+    .knowledge-scroll .know-card {
+      min-width: 130px;
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .knowledge-scroll .know-card .icon { font-size: 24px; }
+    .knowledge-scroll .know-card h5 { font-size: 13px; margin: 8px 0 4px; color: #c8d0e8; }
+    .knowledge-scroll .know-card p { font-size: 11px; color: #667788; }
+
+    /* Community */
+    .community-card {
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 10px;
+    }
+    .community-card .user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .community-card .user .avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .community-card .user .uname { font-size: 13px; font-weight: 500; color: #c8d0e8; }
+    .community-card .user .time { font-size: 11px; color: #667788; margin-left: auto; }
+    .community-card .content { font-size: 12px; color: #8899bb; line-height: 1.6; }
+    .community-card .images {
+      display: flex; gap: 6px; margin-top: 8px;
+    }
+    .community-card .images .img {
+      flex: 1; height: 60px;
+      border-radius: 8px;
+      background: rgba(102,126,234,0.08);
+    }
+
+    /* Bottom Tab */
+    .bottom-tab {
+      position: fixed;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      max-width: 420px;
+      width: 100%;
+      background: rgba(13,18,37,0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      justify-content: space-around;
+      padding: 6px 0 env(safe-area-inset-bottom, 6px);
+      z-index: 100;
+    }
+    .bottom-tab .tab-item {
+      text-align: center;
+      padding: 4px 12px;
+      color: #556688;
+      font-size: 10px;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .bottom-tab .tab-item.active { color: #667eea; }
+    .bottom-tab .tab-item .icon { font-size: 20px; margin-bottom: 2px; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">🚀 车小她 <span>· AI</span></div>
+      <div class="icons">🔔 ⚙️</div>
+    </div>
+    <div class="header-search">搜索驾校、年检、保险…</div>
+  </div>
+
+  <!-- Swiper -->
+  <div class="swiper-wrap">
+    <div class="swiper">
+      <div class="swiper-slide">
+        <div class="tag">
+          <div class="badge">🔥 限时活动</div>
+          <h3>AI 智能选驾校</h3>
+          <p>大数据匹配最适合你的驾校</p>
+        </div>
+      </div>
+      <div class="swiper-dots"><span class="active"></span><span></span><span></span></div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="section">
+    <div class="quick-actions">
+      <div class="qa-card"><div class="icon">🧼</div><div class="label">爱车精洗</div></div>
+      <div class="qa-card"><div class="icon">📍</div><div class="label">附近门店</div></div>
+      <div class="qa-card"><div class="icon">🅿️</div><div class="label">智能停车</div></div>
+    </div>
+  </div>
+
+  <!-- 签到 + 活动 -->
+  <div class="section">
+    <div class="promo-row">
+      <div class="promo-card blue">
+        <div class="title">⚡ 每日签到</div>
+        <div class="sub">连签7天 · 积分翻倍 · 兑换好礼</div>
+      </div>
+      <div class="promo-card purple">
+        <div class="title">💜 爱"她"活动</div>
+        <div class="sub">女性车主专属 · 养护礼遇升级</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core Modules -->
+  <div class="section">
+    <div class="section-title">
+      <h3>🛞 全部服务</h3>
+      <span class="more">查看全部 ›</span>
+    </div>
+    <div class="module-grid">
+      <div class="module-item"><div class="icon">📋</div><div class="name">驾校报名</div></div>
+      <div class="module-item"><div class="icon">✅</div><div class="name">车辆年检</div></div>
+      <div class="module-item"><div class="icon">🛡️</div><div class="name">车辆保险</div></div>
+      <div class="module-item"><div class="icon">🚦</div><div class="name">交管E接</div></div>
+      <div class="module-item"><div class="icon">☕</div><div class="name">小她会客厅</div></div>
+      <div class="module-item"><div class="icon">🌾</div><div class="name">小她农场</div></div>
+    </div>
+  </div>
+
+  <!-- News -->
+  <div class="section">
+    <div class="section-title">
+      <h3>📰 爱车资讯</h3>
+      <span class="more">更多 ›</span>
+    </div>
+    <div class="news-list">
+      <div class="news-item">
+        <div class="thumb"></div>
+        <div class="info">
+          <h4>2026最新年检政策：10年内私家车仅需上线2次</h4>
+          <div class="meta"><span>新政</span>昨天 · 阅读 3.5w</div>
+        </div>
+      </div>
+      <div class="news-item">
+        <div class="thumb"></div>
+        <div class="info">
+          <h4>新能源车险改革来了，这3类车主受益最大</h4>
+          <div class="meta"><span>保险</span>2天前 · 阅读 2.1w</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Knowledge -->
+  <div class="section">
+    <div class="section-title">
+      <h3>📖 爱车知识</h3>
+      <span class="more">更多 ›</span>
+    </div>
+    <div class="knowledge-scroll">
+      <div class="know-card"><div class="icon">🔧</div><h5>保养周期</h5><p>机油三滤更换时间</p></div>
+      <div class="know-card"><div class="icon">🪪</div><h5>驾照攻略</h5><p>科目一到四全流程</p></div>
+      <div class="know-card"><div class="icon">💰</div><h5>保险选购</h5><p>三大险种深度对比</p></div>
+      <div class="know-card"><div class="icon">🅿️</div><h5>停车技巧</h5><p>AI 智能泊车指南</p></div>
+    </div>
+  </div>
+
+  <!-- Community -->
+  <div class="section">
+    <div class="section-title">
+      <h3>💬 爱她社区</h3>
+      <span class="more">更多 ›</span>
+    </div>
+    <div class="community-card">
+      <div class="user"><div class="avatar"></div><span class="uname">小鹿开车</span><span class="time">2h前</span></div>
+      <div class="content">拿到驾照了！车小她推荐的驾校真靠谱，科二科三都是一把过 🎉 感谢平台！</div>
+      <div class="images"><div class="img"></div><div class="img"></div><div class="img"></div></div>
+    </div>
+    <div class="community-card">
+      <div class="user"><div class="avatar"></div><span class="uname">车车达人</span><span class="time">昨天</span></div>
+      <div class="content">年检在线预约 + 到店免排队，全程25分钟搞定，省心省力，推荐大家试试</div>
+    </div>
+  </div>
+
+  <div style="height: 20px;"></div>
+
+  <!-- Bottom Tab -->
+  <div class="bottom-tab">
+    <div class="tab-item active"><div class="icon">🏠</div>首页</div>
+    <div class="tab-item"><div class="icon">🅿️</div>停车导航</div>
+    <div class="tab-item"><div class="icon">🆘</div>紧急救援</div>
+    <div class="tab-item"><div class="icon">👤</div>我的</div>
+  </div>
+</body>
+</html>
